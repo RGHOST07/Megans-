@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>CONTRACTOR Megans LLC · Centro de Mando</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:#0f172a;font-family:Georgia,'Times New Roman',serif;color:#e2e8f0}
+.gold{color:#d4af37}.bg-gold{background:#d4af37;color:#0f172a}
+.card{background:#1e293b;border:1px solid #334155;border-radius:14px;box-shadow:0 8px 24px #0006}
+input,select{background:#0f172a;border:1px solid #475569;border-radius:8px;padding:6px 10px;color:#fff;width:100%;font-family:system-ui}
+label{font-size:11px;color:#94a3b8;font-family:system-ui;text-transform:uppercase;letter-spacing:.05em}
+.btn{padding:8px 14px;border-radius:10px;font-family:system-ui;font-weight:600;border:1px solid #d4af37;color:#d4af37}
+.btn.p{background:#d4af37;color:#0f172a}
+@keyframes pop{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}.pop{animation:pop .7s ease}
+.sheet{background:#fff;color:#111;position:relative;min-height:90vh;padding:32px;font-family:system-ui;overflow:hidden}
+.wm{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:.09;pointer-events:none;z-index:0}
+.wm img{width:100%;height:100%;object-fit:contain}
+.sheet>*:not(.wm){position:relative;z-index:1}
+@media print{.no-print{display:none!important}body{background:#fff}.sheet{padding:0;min-height:auto}@page{margin:14mm}}
+</style></head><body><div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+// ===== CONFIGURACIÓN: pegue aquí los datos de su proyecto Supabase =====
+const SUPABASE_URL="PEGAR_AQUI_PROJECT_URL",SUPABASE_KEY="PEGAR_AQUI_ANON_KEY";
+// =======================================================================
+const CONFIG_OK=SUPABASE_URL.startsWith('https://');
+const sb=CONFIG_OK?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const SYNC={f:null};
+const P={shield:"M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z",home:"M3 11l9-8 9 8v10h-6v-6H9v6H3z",file:"M6 2h9l5 5v15H6zM14 2v6h6",users:"M16 11a4 4 0 100-8 4 4 0 000 8zM2 21c0-4 3-7 7-7s7 3 7 7",calc:"M5 2h14v20H5zM8 6h8M8 11h2M14 11h2M8 16h2M14 16h2",print:"M6 9V2h12v7M6 18H4v-8h16v8h-2M6 14h12v8H6z",img:"M3 3h18v18H3zM8 10a2 2 0 100-4 2 2 0 000 4zM21 15l-5-5L5 21",plus:"M12 5v14M5 12h14",trash:"M4 7h16M9 7V3h6v4M6 7l1 14h10l1-14",out:"M9 21H4V3h5M16 17l5-5-5-5M21 12H9",snow:"M12 2v20M3 7l18 10M21 7L3 17",back:"M15 18l-6-6 6-6",chart:"M4 20V10M10 20V4M16 20v-8M22 20H2"};
+const I=({n,s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline'}}><path d={P[n]}/></svg>;
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const $=n=>'$'+(Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=v=>parseFloat(v)||0;
+const PHONE="862 213 2953",CO="CONTRACTOR Megans LLC";
+const LOGO="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3OTAiIGhlaWdodD0iNDMyIiB2aWV3Qm94PSIwIDAgNzkwIDQzMiI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjE0IiB5MT0iMCIgeDI9Ijc2NSIgeTI9IjAiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0Q1NDgxQyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0YwOTIyRiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGZpbGw9IiNGRkQyMUYiIHN0cm9rZT0iI0ZGRDIxRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIyNC4wIiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjI0LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSIyNC4wIiB5PSIxNDUuNyIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9Ijk5LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iOTkuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9Ijk5LjAiIHk9IjE0NS43IiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iMTUwLjciIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMTc0LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMjI1LjciIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHBvbHlnb24gcG9pbnRzPSIxODcuMywyMC4wIDIwMy4zLDIwLjAgMjI2LjcsMTYwLjAgMjEwLjcsMTYwLjAiLz48cmVjdCB4PSIyNDkuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjI3NC45IiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjMyNC4wIiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjMyNC4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iMzI0LjAiIHk9Ijg0LjQiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSIzNzUuNyIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iNzguNyIgcng9IjQuMyIvPjxwb2x5Z29uIHBvaW50cz0iMzQ2LjQsOTEuNSAzNjEuNCw5MS41IDM5MC4wLDE2MC4wIDM3NS4wLDE2MC4wIi8+PHJlY3QgeD0iMzk5LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iNDUwLjciIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMzk5LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSIzOTkuMCIgeT0iODQuNCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjQ3NC4wIiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjQ3NC4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNDc0LjAiIHk9IjE0NS43IiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNTQ5LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSI1NzQuOSIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSI2MjQuMCIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSI2MjQuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjYyNC4wIiB5PSIxNDUuNyIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjY3NS43IiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjY5OS4wIiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjY5OS4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNjk5LjAiIHk9Ijg0LjQiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSI3NTAuNyIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iNzguNyIgcng9IjQuMyIvPjxwb2x5Z29uIHBvaW50cz0iNzIxLjQsOTEuNSA3MzYuNCw5MS41IDc2NS4wLDE2MC4wIDc1MC4wLDE2MC4wIi8+PHJlY3QgeD0iMTQuMCIgeT0iMTgyLjAiIHdpZHRoPSIyMy43IiBoZWlnaHQ9IjIzMi4wIiByeD0iNy4xIi8+PHJlY3QgeD0iOTkuMyIgeT0iMTgyLjAiIHdpZHRoPSIyMy43IiBoZWlnaHQ9IjIzMi4wIiByeD0iNy4xIi8+PHBvbHlnb24gcG9pbnRzPSIzNi43LDE4Mi4wIDYyLjUsMTgyLjAgODAuOSwzMjUuOCA1Ni4xLDMyNS44Ii8+PHBvbHlnb24gcG9pbnRzPSIxMDAuMywxODIuMCA3NC41LDE4Mi4wIDU2LjEsMzI1LjggODAuOSwzMjUuOCIvPjxyZWN0IHg9IjEzMi4wIiB5PSIyMjQuMCIgd2lkdGg9IjE5LjQiIGhlaWdodD0iMTkwLjAiIHJ4PSI1LjgiLz48cmVjdCB4PSIxMzIuMCIgeT0iMjI0LjAiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIxMzIuMCIgeT0iMzA5LjMiIHdpZHRoPSI3Ni41IiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIxMzIuMCIgeT0iMzk0LjYiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIyMzAuMCIgeT0iMjI0LjAiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjE5MC4wIiByeD0iNS44Ii8+PHJlY3QgeD0iMjMwLjAiIHk9IjIyNC4wIiB3aWR0aD0iODkuMCIgaGVpZ2h0PSIxOS40IiByeD0iNS44Ii8+PHJlY3QgeD0iMjMwLjAiIHk9IjM5NC42IiB3aWR0aD0iODkuMCIgaGVpZ2h0PSIxOS40IiByeD0iNS44Ii8+PHJlY3QgeD0iMjk5LjYiIHk9IjMxNS4yIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSI5OC44IiByeD0iNS44Ii8+PHJlY3QgeD0iMjc0LjUiIHk9IjMxNS4yIiB3aWR0aD0iNDQuNSIgaGVpZ2h0PSIxOS40IiByeD0iNS44Ii8+PHJlY3QgeD0iMzI4LjAiIHk9IjIyNC4wIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSIxOTAuMCIgcng9IjUuOCIvPjxyZWN0IHg9IjM5Ny42IiB5PSIyMjQuMCIgd2lkdGg9IjE5LjQiIGhlaWdodD0iMTkwLjAiIHJ4PSI1LjgiLz48cmVjdCB4PSIzMjguMCIgeT0iMjI0LjAiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIzMjguMCIgeT0iMzExLjQiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSI0MjYuMCIgeT0iMjI0LjAiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjE5MC4wIiByeD0iNS44Ii8+PHJlY3QgeD0iNDk1LjYiIHk9IjIyNC4wIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSIxOTAuMCIgcng9IjUuOCIvPjxwb2x5Z29uIHBvaW50cz0iNDQ0LjQsMjI0LjAgNDY1LjcsMjI0LjAgNDk2LjYsNDE0LjAgNDc1LjMsNDE0LjAiLz48cmVjdCB4PSI1MjQuMCIgeT0iMjI0LjAiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSI1MjQuMCIgeT0iMzA5LjMiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSI1MjQuMCIgeT0iMzk0LjYiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSI1MjQuMCIgeT0iMjI0LjAiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjEwNC43IiByeD0iNS44Ii8+PHJlY3QgeD0iNTkzLjYiIHk9IjMwOS4zIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSIxMDQuNyIgcng9IjUuOCIvPjxyZWN0IHg9IjYyOS4wIiB5PSIzOTAuMCIgd2lkdGg9IjMuMyIgaGVpZ2h0PSIzMi4wIiByeD0iMS4wIi8+PHJlY3QgeD0iNjI5LjAiIHk9IjQxOC43IiB3aWR0aD0iMTUuMCIgaGVpZ2h0PSIzLjMiIHJ4PSIxLjAiLz48cmVjdCB4PSI2NDguMCIgeT0iMzkwLjAiIHdpZHRoPSIzLjMiIGhlaWdodD0iMzIuMCIgcng9IjEuMCIvPjxyZWN0IHg9IjY0OC4wIiB5PSI0MTguNyIgd2lkdGg9IjE1LjAiIGhlaWdodD0iMy4zIiByeD0iMS4wIi8+PHJlY3QgeD0iNjY3LjAiIHk9IjM5MC4wIiB3aWR0aD0iMy4zIiBoZWlnaHQ9IjMyLjAiIHJ4PSIxLjAiLz48cmVjdCB4PSI2NjcuMCIgeT0iMzkwLjAiIHdpZHRoPSIxNS4wIiBoZWlnaHQ9IjMuMyIgcng9IjEuMCIvPjxyZWN0IHg9IjY2Ny4wIiB5PSI0MTguNyIgd2lkdGg9IjE1LjAiIGhlaWdodD0iMy4zIiByeD0iMS4wIi8+PC9nPjxnIGZpbGw9InVybCgjZykiPjxyZWN0IHg9IjI0LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMjQuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjI0LjAiIHk9IjE0NS43IiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iOTkuMCIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSI5OS4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iOTkuMCIgeT0iMTQ1LjciIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSIxNTAuNyIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSIxNzQuMCIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSIyMjUuNyIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cG9seWdvbiBwb2ludHM9IjE4Ny4zLDIwLjAgMjAzLjMsMjAuMCAyMjYuNywxNjAuMCAyMTAuNywxNjAuMCIvPjxyZWN0IHg9IjI0OS4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iMjc0LjkiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMzI0LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iMzI0LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSIzMjQuMCIgeT0iODQuNCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjM3NS43IiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSI3OC43IiByeD0iNC4zIi8+PHBvbHlnb24gcG9pbnRzPSIzNDYuNCw5MS41IDM2MS40LDkxLjUgMzkwLjAsMTYwLjAgMzc1LjAsMTYwLjAiLz48cmVjdCB4PSIzOTkuMCIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSI0NTAuNyIgeT0iMjAuMCIgd2lkdGg9IjE0LjMiIGhlaWdodD0iMTQwLjAiIHJ4PSI0LjMiLz48cmVjdCB4PSIzOTkuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjM5OS4wIiB5PSI4NC40IiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNDc0LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iNDc0LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSI0NzQuMCIgeT0iMTQ1LjciIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSI1NDkuMCIgeT0iMjAuMCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9IjU3NC45IiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjYyNC4wIiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSIxNDAuMCIgcng9IjQuMyIvPjxyZWN0IHg9IjYyNC4wIiB5PSIyMC4wIiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNjI0LjAiIHk9IjE0NS43IiB3aWR0aD0iNjYuMCIgaGVpZ2h0PSIxNC4zIiByeD0iNC4zIi8+PHJlY3QgeD0iNjc1LjciIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iNjk5LjAiIHk9IjIwLjAiIHdpZHRoPSIxNC4zIiBoZWlnaHQ9IjE0MC4wIiByeD0iNC4zIi8+PHJlY3QgeD0iNjk5LjAiIHk9IjIwLjAiIHdpZHRoPSI2Ni4wIiBoZWlnaHQ9IjE0LjMiIHJ4PSI0LjMiLz48cmVjdCB4PSI2OTkuMCIgeT0iODQuNCIgd2lkdGg9IjY2LjAiIGhlaWdodD0iMTQuMyIgcng9IjQuMyIvPjxyZWN0IHg9Ijc1MC43IiB5PSIyMC4wIiB3aWR0aD0iMTQuMyIgaGVpZ2h0PSI3OC43IiByeD0iNC4zIi8+PHBvbHlnb24gcG9pbnRzPSI3MjEuNCw5MS41IDczNi40LDkxLjUgNzY1LjAsMTYwLjAgNzUwLjAsMTYwLjAiLz48cmVjdCB4PSIxNC4wIiB5PSIxODIuMCIgd2lkdGg9IjIzLjciIGhlaWdodD0iMjMyLjAiIHJ4PSI3LjEiLz48cmVjdCB4PSI5OS4zIiB5PSIxODIuMCIgd2lkdGg9IjIzLjciIGhlaWdodD0iMjMyLjAiIHJ4PSI3LjEiLz48cG9seWdvbiBwb2ludHM9IjM2LjcsMTgyLjAgNjIuNSwxODIuMCA4MC45LDMyNS44IDU2LjEsMzI1LjgiLz48cG9seWdvbiBwb2ludHM9IjEwMC4zLDE4Mi4wIDc0LjUsMTgyLjAgNTYuMSwzMjUuOCA4MC45LDMyNS44Ii8+PHJlY3QgeD0iMTMyLjAiIHk9IjIyNC4wIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSIxOTAuMCIgcng9IjUuOCIvPjxyZWN0IHg9IjEzMi4wIiB5PSIyMjQuMCIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjEzMi4wIiB5PSIzMDkuMyIgd2lkdGg9Ijc2LjUiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjEzMi4wIiB5PSIzOTQuNiIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjIzMC4wIiB5PSIyMjQuMCIgd2lkdGg9IjE5LjQiIGhlaWdodD0iMTkwLjAiIHJ4PSI1LjgiLz48cmVjdCB4PSIyMzAuMCIgeT0iMjI0LjAiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIyMzAuMCIgeT0iMzk0LjYiIHdpZHRoPSI4OS4wIiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIyOTkuNiIgeT0iMzE1LjIiIHdpZHRoPSIxOS40IiBoZWlnaHQ9Ijk4LjgiIHJ4PSI1LjgiLz48cmVjdCB4PSIyNzQuNSIgeT0iMzE1LjIiIHdpZHRoPSI0NC41IiBoZWlnaHQ9IjE5LjQiIHJ4PSI1LjgiLz48cmVjdCB4PSIzMjguMCIgeT0iMjI0LjAiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjE5MC4wIiByeD0iNS44Ii8+PHJlY3QgeD0iMzk3LjYiIHk9IjIyNC4wIiB3aWR0aD0iMTkuNCIgaGVpZ2h0PSIxOTAuMCIgcng9IjUuOCIvPjxyZWN0IHg9IjMyOC4wIiB5PSIyMjQuMCIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjMyOC4wIiB5PSIzMTEuNCIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjQyNi4wIiB5PSIyMjQuMCIgd2lkdGg9IjE5LjQiIGhlaWdodD0iMTkwLjAiIHJ4PSI1LjgiLz48cmVjdCB4PSI0OTUuNiIgeT0iMjI0LjAiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjE5MC4wIiByeD0iNS44Ii8+PHBvbHlnb24gcG9pbnRzPSI0NDQuNCwyMjQuMCA0NjUuNywyMjQuMCA0OTYuNiw0MTQuMCA0NzUuMyw0MTQuMCIvPjxyZWN0IHg9IjUyNC4wIiB5PSIyMjQuMCIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjUyNC4wIiB5PSIzMDkuMyIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjUyNC4wIiB5PSIzOTQuNiIgd2lkdGg9Ijg5LjAiIGhlaWdodD0iMTkuNCIgcng9IjUuOCIvPjxyZWN0IHg9IjUyNC4wIiB5PSIyMjQuMCIgd2lkdGg9IjE5LjQiIGhlaWdodD0iMTA0LjciIHJ4PSI1LjgiLz48cmVjdCB4PSI1OTMuNiIgeT0iMzA5LjMiIHdpZHRoPSIxOS40IiBoZWlnaHQ9IjEwNC43IiByeD0iNS44Ii8+PHJlY3QgeD0iNjI5LjAiIHk9IjM5MC4wIiB3aWR0aD0iMy4zIiBoZWlnaHQ9IjMyLjAiIHJ4PSIxLjAiLz48cmVjdCB4PSI2MjkuMCIgeT0iNDE4LjciIHdpZHRoPSIxNS4wIiBoZWlnaHQ9IjMuMyIgcng9IjEuMCIvPjxyZWN0IHg9IjY0OC4wIiB5PSIzOTAuMCIgd2lkdGg9IjMuMyIgaGVpZ2h0PSIzMi4wIiByeD0iMS4wIi8+PHJlY3QgeD0iNjQ4LjAiIHk9IjQxOC43IiB3aWR0aD0iMTUuMCIgaGVpZ2h0PSIzLjMiIHJ4PSIxLjAiLz48cmVjdCB4PSI2NjcuMCIgeT0iMzkwLjAiIHdpZHRoPSIzLjMiIGhlaWdodD0iMzIuMCIgcng9IjEuMCIvPjxyZWN0IHg9IjY2Ny4wIiB5PSIzOTAuMCIgd2lkdGg9IjE1LjAiIGhlaWdodD0iMy4zIiByeD0iMS4wIi8+PHJlY3QgeD0iNjY3LjAiIHk9IjQxOC43IiB3aWR0aD0iMTUuMCIgaGVpZ2h0PSIzLjMiIHJ4PSIxLjAiLz48L2c+PHBvbHlnb24gZmlsbD0iI0ZGRDIxRiIgcG9pbnRzPSIxMzIsMjE0IDM3MiwxNzAgNjEzLDIxNCIvPjwvc3ZnPg==";
+const greet=()=>{const h=new Date().getHours();return h<12?'Muy buenos días':h<19?'Muy buenas tardes':'Muy buenas noches'};
+const Field=({l,v,set,t="text",ph})=><div><label>{l}</label><input type={t} value={v} placeholder={ph} onChange={e=>set(e.target.value)}/></div>;
+const Frases=["Los grandes líderes construyen imperios, techo por techo.","Cada proyecto lleva su sello de excelencia.","La visión de un líder convierte tormentas en ganancias."];
+
+function chime(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[523,659,784].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,c.currentTime+i*.15);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.15+.5);o.start(c.currentTime+i*.15);o.stop(c.currentTime+i*.15+.5)})}catch(e){}}
+
+function Login({onOk}){
+  const cred=ld('mg_cred',null);
+  const [mode,setMode]=useState(cred?cred.mode:'pin');
+  const [name,setName]=useState(ld('mg_name',''));
+  const [pin,setPin]=useState('');const [pat,setPat]=useState([]);const [err,setErr]=useState('');
+  const [granted,setGranted]=useState(false);
+  const val=mode==='pin'?pin:pat.join('-');
+  const ready=mode==='pin'?pin.length===4:pat.length>=4;
+  const go=()=>{
+    if(!name.trim())return setErr('Ingrese su nombre o título');
+    if(!cred)sv('mg_cred',{mode,val});
+    else if(cred.val!==val){setErr('Credencial incorrecta');setPin('');setPat([]);return}
+    sv('mg_name',name.trim());setGranted(true);chime();setTimeout(()=>onOk(name.trim()),2200);
+  };
+  if(granted)return <div className="min-h-screen flex items-center justify-center text-center p-6"><div className="pop"><img src={LOGO} style={{height:150,margin:'0 auto 16px'}}/><h1 className="text-3xl gold font-bold">Acceso Concedido</h1><p className="text-xl mt-2">Centro de Mando Activado</p><p className="mt-4 text-slate-400">{greet()}, {name}</p></div></div>;
+  return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center">
+    <img src={LOGO} style={{height:110,margin:'0 auto'}}/>
+    <h1 className="text-2xl font-bold gold mt-2">{CO}</h1><p className="text-xs text-slate-400 mb-4 tracking-widest">EXECUTIVE VIP ACCESS</p>
+    <div className="text-left mb-3"><Field l="Nombre / Título (ej: Director Megan, Jefe)" v={name} set={setName}/></div>
+    {!cred&&<div className="flex gap-2 mb-3">{['pin','pattern'].map(m=><button key={m} onClick={()=>{setMode(m);setPin('');setPat([])}} className={'btn flex-1 '+(mode===m?'p':'')}>{m==='pin'?'PIN 4 dígitos':'Patrón'}</button>)}</div>}
+    {mode==='pin'?<div><div className="text-3xl tracking-[.6em] h-10 gold">{'●'.repeat(pin.length)}{'○'.repeat(4-pin.length)}</div>
+      <div className="grid grid-cols-3 gap-2 mt-2">{[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(k=><button key={k} className="card py-3 text-xl" onClick={()=>{if(k==='C')setPin('');else if(k==='⌫')setPin(pin.slice(0,-1));else if(pin.length<4)setPin(pin+k)}}>{k}</button>)}</div></div>
+    :<div><p className="text-xs text-slate-400 mb-2">Toque al menos 4 puntos en secuencia</p><div className="grid grid-cols-3 gap-4 w-48 mx-auto">{[...Array(9)].map((_,i)=>{const ix=pat.indexOf(i);return <button key={i} onClick={()=>!pat.includes(i)&&setPat([...pat,i])} className={'w-12 h-12 rounded-full border-2 mx-auto text-sm '+(ix>=0?'bg-gold border-yellow-500':'border-slate-500')}>{ix>=0?ix+1:''}</button>})}</div><button className="text-xs text-slate-400 mt-2" onClick={()=>setPat([])}>Reiniciar patrón</button></div>}
+    {err&&<p className="text-red-400 text-sm mt-2">{err}</p>}
+    <button disabled={!ready} onClick={go} className="btn p w-full mt-4 disabled:opacity-40">{cred?'Ingresar':'Crear acceso e ingresar'}</button>
+  </div></div>;
+}
+
+const Doc=({logo,children,onBack})=><div className="min-h-screen bg-slate-300 p-3"><div className="no-print flex gap-2 mb-3 max-w-3xl mx-auto"><button className="btn bg-white" onClick={onBack}><I n="back"/> Volver</button><button className="btn p" onClick={()=>window.print()}><I n="print"/> Imprimir / Guardar PDF</button></div>
+  <div className="sheet max-w-3xl mx-auto shadow-xl"><div className="wm">{logo?<img src={logo}/>:<div style={{fontSize:60,fontWeight:700,transform:'rotate(-30deg)',textAlign:'center'}}>{CO}</div>}</div>
+  <div className="flex justify-between border-b-2 border-yellow-600 pb-3 mb-4"><div className="flex items-center gap-3"><img src={logo||LOGO} style={{height:64}}/><div><h1 className="text-2xl font-bold">{CO}</h1><p className="text-sm text-gray-600">Roofing &amp; Siding · Snow Plowing</p></div></div><p className="text-sm">Tel: {PHONE}</p></div>{children}</div></div>;
+
+function Quotes({logo,boss,quotes,setQuotes}){
+  const blank={svc:'Roofing & Siding',client:'',addr:'',mats:[{n:'',q:1,p:0}],hrs:8,rate:25,crew:2,ops:[{n:'Combustible',c:0}],margin:30};
+  const [q,setQ]=useState(blank);const [view,setView]=useState(false);
+  const mat=q.mats.reduce((a,m)=>a+num(m.q)*num(m.p),0),lab=num(q.hrs)*num(q.rate)*num(q.crew),op=q.ops.reduce((a,o)=>a+num(o.c),0);
+  const cost=mat+lab+op,price=cost*(1+num(q.margin)/100),profit=price-cost;
+  const up=(k,v)=>setQ({...q,[k]:v});
+  const upl=(k,i,f,v)=>up(k,q[k].map((x,j)=>j===i?{...x,[f]:v}:x));
+  const save=()=>{setQuotes([...quotes,{...q,price,profit,cost,status:'Pendiente',ts:Date.now(),date:new Date().toLocaleDateString()}]);setQ(blank)};
+  if(view)return <Doc logo={logo||LOGO} onBack={()=>setView(false)}>
+    <h2 className="text-xl font-bold mb-1">PROFORMA / COTIZACIÓN</h2><p className="text-sm mb-4">Fecha: {new Date().toLocaleDateString()} · Servicio: {q.svc}</p>
+    <p className="text-sm mb-4"><b>Cliente:</b> {q.client||'—'}<br/><b>Dirección:</b> {q.addr||'—'}</p>
+    <table className="w-full text-sm mb-4"><thead><tr className="border-b-2 text-left"><th>Concepto</th><th>Cant.</th><th className="text-right">P. Unit.</th><th className="text-right">Total</th></tr></thead><tbody>
+    {q.mats.filter(m=>m.n).map((m,i)=><tr key={i} className="border-b"><td>{m.n}</td><td>{m.q}</td><td className="text-right">{$(m.p)}</td><td className="text-right">{$(num(m.q)*num(m.p))}</td></tr>)}
+    <tr className="border-b"><td>Mano de obra ({q.crew} empleados · {q.hrs} h)</td><td></td><td></td><td className="text-right">{$(lab)}</td></tr>
+    {q.ops.filter(o=>o.n).map((o,i)=><tr key={i} className="border-b"><td>{o.n}</td><td></td><td></td><td className="text-right">{$(o.c)}</td></tr>)}</tbody></table>
+    <p className="text-right text-xl font-bold">TOTAL: {$(price)}</p><p className="text-xs text-gray-500 mt-8">Cotización válida por 30 días. Gracias por su confianza.</p></Doc>;
+  return <div className="space-y-3">
+    <div className="card p-4 grid sm:grid-cols-3 gap-3"><div><label>Servicio</label><select value={q.svc} onChange={e=>up('svc',e.target.value)}><option>Roofing &amp; Siding</option><option>Snow Plowing</option></select></div><Field l="Cliente" v={q.client} set={v=>up('client',v)}/><Field l="Dirección" v={q.addr} set={v=>up('addr',v)}/></div>
+    <div className="card p-4"><h3 className="gold font-bold mb-2">Materiales</h3>{q.mats.map((m,i)=><div key={i} className="grid grid-cols-6 gap-2 mb-2"><div className="col-span-3"><input placeholder="Nombre" value={m.n} onChange={e=>upl('mats',i,'n',e.target.value)}/></div><input type="number" placeholder="Cant" value={m.q} onChange={e=>upl('mats',i,'q',e.target.value)}/><input type="number" placeholder="Precio" value={m.p} onChange={e=>upl('mats',i,'p',e.target.value)}/><div className="text-right text-sm pt-2">{$(num(m.q)*num(m.p))}</div></div>)}<button className="btn" onClick={()=>up('mats',[...q.mats,{n:'',q:1,p:0}])}><I n="plus" s={14}/> Material</button></div>
+    <div className="card p-4"><h3 className="gold font-bold mb-2">Mano de obra</h3><div className="grid grid-cols-3 gap-2"><Field l="Horas/Días" t="number" v={q.hrs} set={v=>up('hrs',v)}/><Field l="Tarifa cuadrilla $" t="number" v={q.rate} set={v=>up('rate',v)}/><Field l="Empleados" t="number" v={q.crew} set={v=>up('crew',v)}/></div></div>
+    <div className="card p-4"><h3 className="gold font-bold mb-2">Gastos operativos (maquinaria, camión, combustible, sal)</h3>{q.ops.map((o,i)=><div key={i} className="grid grid-cols-3 gap-2 mb-2"><div className="col-span-2"><input placeholder="Concepto" value={o.n} onChange={e=>upl('ops',i,'n',e.target.value)}/></div><input type="number" placeholder="$" value={o.c} onChange={e=>upl('ops',i,'c',e.target.value)}/></div>)}<button className="btn" onClick={()=>up('ops',[...q.ops,{n:'',c:0}])}><I n="plus" s={14}/> Gasto</button></div>
+    <div className="card p-4"><Field l="Margen de ganancia ejecutivo %" t="number" v={q.margin} set={v=>up('margin',v)}/><div className="grid grid-cols-3 text-center mt-3"><div><label>Costo</label><p className="text-lg">{$(cost)}</p></div><div><label>Ganancia</label><p className="text-lg gold">{$(profit)}</p></div><div><label>Precio venta</label><p className="text-xl font-bold text-green-400">{$(price)}</p></div></div>
+    <div className="flex gap-2 mt-3"><button className="btn p flex-1" onClick={()=>setView(true)}><I n="print"/> Vista oficial</button><button className="btn flex-1" onClick={save}>Guardar cotización</button></div></div>
+    {quotes.length>0&&<div className="card p-4"><h3 className="gold font-bold mb-2">Emitidas ({quotes.length})</h3>{quotes.map((x,i)=><div key={i} className="flex justify-between text-sm border-b border-slate-700 py-1"><span>{x.date} · {x.client||'Sin cliente'} · {x.svc}</span><span>{$(x.price)} <button onClick={()=>setQuotes(quotes.filter((_,j)=>j!==i))}><I n="trash" s={14}/></button></span></div>)}</div>}
+  </div>;
+}
+
+function Payroll({logo,boss,emps,setEmps}){
+  const [stub,setStub]=useState(null);
+  const up=(i,f,v)=>setEmps(emps.map((e,j)=>j===i?{...e,[f]:v}:e));
+  const gross=e=>num(e.rate)*num(e.units),net=e=>gross(e)-num(e.adv)-num(e.ded);
+  if(stub!==null){const e=emps[stub];return <Doc logo={logo||LOGO} onBack={()=>setStub(null)}>
+    <h2 className="text-xl font-bold mb-3">COLILLA DE PAGO</h2><p className="text-sm mb-4"><b>Empleado:</b> {e.name}<br/><b>Cargo:</b> {e.role}<br/><b>Fecha:</b> {new Date().toLocaleDateString()}</p>
+    <table className="w-full text-sm mb-6"><tbody><tr className="border-b"><td>Tarifa por {e.type}</td><td className="text-right">{$(e.rate)}</td></tr><tr className="border-b"><td>{e.type==='hora'?'Horas':'Días'} trabajados</td><td className="text-right">{e.units}</td></tr><tr className="border-b"><td>Sueldo bruto</td><td className="text-right">{$(gross(e))}</td></tr><tr className="border-b"><td>Adelantos</td><td className="text-right">-{$(e.adv)}</td></tr><tr className="border-b"><td>Deducciones</td><td className="text-right">-{$(e.ded)}</td></tr><tr className="font-bold text-lg"><td>PAGO NETO</td><td className="text-right">{$(net(e))}</td></tr></tbody></table>
+    <div className="grid grid-cols-2 gap-10 mt-20 text-center text-sm"><div className="border-t border-black pt-1">Firma del empleado<br/>{e.name}</div><div className="border-t border-black pt-1">Firma autorizada<br/>{boss}</div></div></Doc>}
+  return <div className="space-y-3">{emps.map((e,i)=><div key={i} className="card p-4"><div className="grid grid-cols-2 sm:grid-cols-4 gap-2"><Field l="Nombre" v={e.name} set={v=>up(i,'name',v)}/><Field l="Cargo" v={e.role} set={v=>up(i,'role',v)}/><Field l="Tarifa $" t="number" v={e.rate} set={v=>up(i,'rate',v)}/><div><label>Tipo</label><select value={e.type} onChange={ev=>up(i,'type',ev.target.value)}><option value="hora">Por hora</option><option value="día">Por día</option></select></div><Field l="Horas/Jornadas" t="number" v={e.units} set={v=>up(i,'units',v)}/><Field l="Adelantos $" t="number" v={e.adv} set={v=>up(i,'adv',v)}/><Field l="Deducciones $" t="number" v={e.ded} set={v=>up(i,'ded',v)}/><div className="text-sm pt-4">Bruto {$(gross(e))}<br/><b className="text-green-400">Neto {$(net(e))}</b></div></div>
+    <div className="flex gap-2 mt-3"><button className="btn p" onClick={()=>setStub(i)}><I n="print"/> Colilla</button><button className="btn" onClick={()=>setEmps(emps.filter((_,j)=>j!==i))}><I n="trash"/></button></div></div>)}
+    <button className="btn p" onClick={()=>setEmps([...emps,{name:'',role:'',rate:20,type:'hora',units:40,adv:0,ded:0}])}><I n="plus" s={14}/> Agregar trabajador</button></div>;
+}
+
+function Calc(){
+  const [m,setM]=useState('roof');const [a,setA]=useState(1000);const [c,setC]=useState(4);const [mg,setMg]=useState(35);
+  const cost=m==='roof'?num(a)*num(c):num(a)/1000*num(c),price=cost*(1+num(mg)/100);
+  return <div className="card p-4 space-y-3"><div className="flex gap-2">{[['roof','Techos / Siding'],['snow','Remoción de nieve']].map(([k,l])=><button key={k} className={'btn flex-1 '+(m===k?'p':'')} onClick={()=>{setM(k);setC(k==='roof'?4:35)}}>{l}</button>)}</div>
+    <Field l={m==='roof'?'Pies cuadrados (sq ft)':'Área a despejar (sq ft)'} t="number" v={a} set={setA}/><Field l={m==='roof'?'Costo real por sq ft $':'Costo real por 1,000 sq ft $'} t="number" v={c} set={setC}/><Field l="Margen deseado %" t="number" v={mg} set={setMg}/>
+    <div className="grid grid-cols-2 gap-3 text-center"><div className="card p-3"><label>Costo real</label><p className="text-xl">{$(cost)}</p></div><div className="card p-3"><label>Precio sugerido</label><p className="text-xl font-bold text-green-400">{$(price)}</p></div></div><p className="text-center gold">Ganancia estimada: {$(price-cost)}</p></div>;
+}
+
+function Dash({boss,quotes,emps,inv}){
+  const f=Frases[new Date().getDate()%Frases.length];const it=x=>x.lines.reduce((a,l)=>a+num(l.a),0)*(1+num(x.tax)/100),pend=(inv||[]).filter(x=>x.st!=='Pagada').reduce((s,x)=>s+it(x),0),paid=(inv||[]).filter(x=>x.st==='Pagada').reduce((s,x)=>s+it(x),0);
+  const tot=quotes.reduce((a,x)=>a+x.price,0),pr=quotes.reduce((a,x)=>a+x.profit,0),hrs=emps.reduce((a,e)=>a+num(e.units),0);
+  const rs=quotes.filter(x=>x.svc.startsWith('Roof')).length,sn=quotes.length-rs;
+  const K=({l,v,c})=><div className="card p-4"><label>{l}</label><p className={'text-2xl font-bold '+(c||'')}>{v}</p></div>;
+  return <div className="space-y-3"><div className="card p-5 text-center"><img src={LOGO} style={{height:110,margin:'0 auto 8px'}}/><h2 className="text-2xl gold font-bold">{greet()}, {boss}</h2><p className="mt-1">Bienvenido a su Centro de Mando. Sus operaciones de Roofing, Siding y Snow Plowing reportan un rendimiento óptimo hoy.</p></div>
+    <div className="grid grid-cols-2 gap-3"><K l="Presupuestos emitidos" v={$(tot)}/><K l="Ganancia neta estimada" v={$(pr)} c="text-green-400"/><K l="Horas de la cuadrilla" v={hrs}/><K l="Proyectos" v={`${rs} Roofing/Siding · ${sn} Snow`}/><K l="Facturas por cobrar" v={$(pend)} c="gold"/><K l="Facturas cobradas" v={$(paid)} c="text-green-400"/></div>
+    <div className="card p-5 italic gold">“{f}” — para usted, {boss}.</div><p className="text-center text-xs text-slate-400">{CO}: Bajo el liderazgo de {boss}</p></div>;
+}
+
+function Reports({logo,quotes,setQuotes}){
+  const [view,setView]=useState(false);
+  const ST=['Pendiente','En proceso','Completado'];
+  const L=quotes.map((x,i)=>({...x,i,st:x.status||'Pendiente'}));
+  const done=L.filter(x=>x.st==='Completado'),open=L.filter(x=>x.st!=='Completado');
+  const sum=(a,k)=>a.reduce((s,x)=>s+num(x[k]),0);
+  const sales=sum(done,'price'),gain=sum(done,'profit');
+  const months={};
+  done.forEach(x=>{const k=new Date(x.ts||Date.now()).toLocaleDateString('es',{month:'long',year:'numeric'});months[k]=(months[k]||0)+num(x.profit)});
+  const mx=Math.max(1,...Object.values(months));
+  const setSt=(i,v)=>setQuotes(quotes.map((x,j)=>j===i?{...x,status:v}:x));
+  const bySvc=['Roofing & Siding','Snow Plowing'].map(s=>{const a=done.filter(x=>x.svc===s);return {s,n:a.length,v:sum(a,'price'),g:sum(a,'profit')}});
+  const K=({l,v,c})=><div className="card p-4"><label>{l}</label><p className={'text-xl font-bold '+(c||'')}>{v}</p></div>;
+  if(view)return <Doc logo={logo||LOGO} onBack={()=>setView(false)}>
+    <h2 className="text-xl font-bold mb-1">REPORTE DE GANANCIAS</h2><p className="text-sm mb-3">Emitido: {new Date().toLocaleDateString()} · Trabajos completados: {done.length}</p>
+    <p className="text-sm mb-4"><b>Ventas:</b> {$(sales)} · <b>Ganancia neta:</b> {$(gain)} · <b>Por cobrar/en curso:</b> {$(sum(open,'price'))}</p>
+    <table className="w-full text-sm"><thead><tr className="border-b-2 text-left"><th>Fecha</th><th>Cliente</th><th>Servicio</th><th>Estado</th><th className="text-right">Venta</th><th className="text-right">Ganancia</th></tr></thead><tbody>{L.map(x=><tr key={x.i} className="border-b"><td>{x.date}</td><td>{x.client||'—'}</td><td>{x.svc}</td><td>{x.st}</td><td className="text-right">{$(x.price)}</td><td className="text-right">{$(x.profit)}</td></tr>)}</tbody></table></Doc>;
+  return <div className="space-y-3">
+    <div className="grid grid-cols-2 gap-3"><K l="Ventas completadas" v={$(sales)}/><K l="Ganancia realizada" v={$(gain)} c="text-green-400"/><K l="Trabajos completados" v={done.length}/><K l="Ganancia pendiente" v={$(sum(open,'profit'))} c="gold"/></div>
+    <div className="card p-4"><h3 className="gold font-bold mb-2">Por servicio (completados)</h3>{bySvc.map(s=><div key={s.s} className="flex justify-between text-sm border-b border-slate-700 py-1"><span>{s.s} ({s.n})</span><span>{$(s.v)} · <b className="text-green-400">{$(s.g)}</b></span></div>)}</div>
+    {Object.keys(months).length>0&&<div className="card p-4 space-y-2"><h3 className="gold font-bold">Ganancia por mes</h3>{Object.entries(months).map(([k,v])=><div key={k}><div className="flex justify-between text-sm"><span className="capitalize">{k}</span><span>{$(v)}</span></div><div className="h-2 rounded bg-slate-700"><div className="h-2 rounded bg-gold" style={{width:(v/mx*100)+'%'}}/></div></div>)}</div>}
+    <div className="card p-4"><div className="flex justify-between items-center mb-2"><h3 className="gold font-bold">Historial de trabajos ({L.length})</h3><button className="btn p" onClick={()=>setView(true)}><I n="print" s={14}/> Reporte</button></div>
+    {L.length===0&&<p className="text-sm text-slate-400">Guarde cotizaciones en el módulo Cotizar y aparecerán aquí. Marque cada trabajo como Completado para sumarlo a sus ganancias.</p>}
+    {[...L].reverse().map(x=><div key={x.i} className="border-b border-slate-700 py-2 text-sm"><div className="flex justify-between"><span>{x.date} · {x.client||'Sin cliente'}</span><span>{$(x.price)}</span></div><div className="flex justify-between items-center mt-1"><span className="text-slate-400">{x.svc} · ganancia <b className="text-green-400">{$(x.profit)}</b></span><div className="flex gap-2 items-center"><div style={{width:130}}><select value={x.st} onChange={e=>setSt(x.i,e.target.value)}>{ST.map(s=><option key={s}>{s}</option>)}</select></div><button onClick={()=>setQuotes(quotes.filter((_,j)=>j!==x.i))}><I n="trash" s={14}/></button></div></div></div>)}</div></div>;
+}
+
+function Backup({data,onRestore,onClose}){
+  const [t,setT]=useState('');const [m,setM]=useState('');
+  const json=JSON.stringify(data);
+  const ta={background:'#0f172a',color:'#fff',width:'100%',borderRadius:8,padding:8,fontSize:11,border:'1px solid #475569'};
+  const copy=()=>{try{navigator.clipboard.writeText(json).then(()=>setM('Copiado. Guárdelo en un lugar seguro (WhatsApp, correo o notas).'),()=>setM('Seleccione el texto y cópielo manualmente.'))}catch(e){setM('Seleccione el texto y cópielo manualmente.')}};
+  const restore=()=>{try{const d=JSON.parse(t);if(!Array.isArray(d.quotes)||!Array.isArray(d.emps))throw 0;onRestore(d);setM('Datos restaurados.')}catch(e){setM('El texto no es un respaldo válido.')}};
+  return <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-3"><div className="card p-4 w-full max-w-lg max-h-[90vh] overflow-auto space-y-2">
+    <h3 className="gold font-bold">Respaldo de datos</h3>
+    <p className="text-xs text-slate-400">Copie este código (cotizaciones y planilla) y guárdelo. Si algún día se pierden los datos, péguelo abajo para recuperarlos. El logo se vuelve a cargar con el botón Logo.</p>
+    <textarea readOnly value={json} onFocus={e=>e.target.select()} rows={4} style={ta}/>
+    <button className="btn p w-full" onClick={copy}>Copiar respaldo</button>
+    <textarea value={t} onChange={e=>setT(e.target.value)} placeholder="Pegue aquí un respaldo para restaurar (reemplaza los datos actuales)" rows={3} style={ta}/>
+    <button className="btn w-full" onClick={restore}>Restaurar datos</button>
+    {m&&<p className="text-sm gold">{m}</p>}<button className="btn w-full" onClick={()=>sb.auth.signOut()}>Cerrar sesión completa</button><button className="btn w-full" onClick={onClose}>Cerrar</button></div></div>;
+}
+
+function useCloud(key,def){
+  const [v,setV]=useState(()=>ld('mg_'+key,def));const [st,setSt]=useState('loading');const [n,setN]=useState(0);
+  useEffect(()=>{sb.from('app_data').select('value').eq('key',key).maybeSingle().then(({data,error})=>{if(error)setSt('error');else{if(data&&!ld('mg_dirty_'+key,false))setV(data.value);setSt('ready')}},()=>setSt('error'))},[]);
+  useEffect(()=>{const f=()=>setN(x=>x+1);window.addEventListener('online',f);return()=>window.removeEventListener('online',f)},[]);
+  useEffect(()=>{if(st!=='ready')return;sv('mg_'+key,v);const t=setTimeout(()=>{sb.from('app_data').upsert({key,value:v,updated_at:new Date().toISOString()}).then(({error})=>{sv('mg_dirty_'+key,!!error);SYNC.f&&SYNC.f(error?'err':'ok')},()=>{sv('mg_dirty_'+key,true);SYNC.f&&SYNC.f('err')})},700);return()=>clearTimeout(t)},[v,st,n]);
+  return [v,setV,st];
+}
+function Auth(){
+  const [email,setE]=useState('');const [pw,setP]=useState('');const [err,setErr]=useState('');const [busy,setB]=useState(false);
+  const go=async()=>{setB(true);setErr('');const {error}=await sb.auth.signInWithPassword({email:email.trim(),password:pw});if(error)setErr('Correo o contraseña incorrectos');setB(false)};
+  return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center space-y-3"><img src={LOGO} style={{height:110,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold">{CO}</h1><p className="text-xs text-slate-400 tracking-widest">INICIO DE SESIÓN SEGURO</p><div className="text-left space-y-2"><Field l="Correo" t="email" v={email} set={setE}/><Field l="Contraseña" t="password" v={pw} set={setP}/></div>{err&&<p className="text-red-400 text-sm">{err}</p>}<button className="btn p w-full disabled:opacity-40" disabled={busy||!email||!pw} onClick={go}>{busy?'Verificando…':'Entrar'}</button></div></div>;
+}
+function Root(){
+  const [s,setS]=useState(undefined);
+  useEffect(()=>{if(!CONFIG_OK)return;sb.auth.getSession().then(({data})=>setS(data.session));const {data}=sb.auth.onAuthStateChange((_e,x)=>setS(x));return()=>data.subscription.unsubscribe()},[]);
+  if(!CONFIG_OK)return <div className="min-h-screen flex items-center justify-center p-6 text-center">Falta configurar Supabase: pegue el Project URL y la anon key al inicio del archivo.</div>;
+  if(s===undefined)return <div className="min-h-screen flex items-center justify-center gold">Cargando…</div>;
+  return s?<App/>:<Auth/>;
+}
+
+function Invoices({logo,quotes,inv,setInv}){
+  const blank={client:'',addr:'',lines:[{n:'',a:0}],tax:0,st:'Pendiente'};
+  const [f,setF]=useState(blank);const [view,setView]=useState(null);
+  const sub=x=>x.lines.reduce((s,l)=>s+num(l.a),0),tot=x=>sub(x)*(1+num(x.tax)/100);
+  const up=(k,v)=>setF({...f,[k]:v});const upl=(i,k,v)=>up('lines',f.lines.map((l,j)=>j===i?{...l,[k]:v}:l));
+  const fromQ=i=>{const x=quotes[i];if(x)setF({...f,client:x.client,addr:x.addr||'',lines:[{n:x.svc+' - trabajo cotizado',a:Math.round(x.price*100)/100}]})};
+  const save=()=>{setInv([...inv,{...f,no:1001+inv.length,date:new Date().toLocaleDateString()}]);setF(blank)};
+  const setSt=(i,v)=>setInv(inv.map((x,j)=>j===i?{...x,st:v}:x));
+  if(view!==null){const x=inv[view];return <Doc logo={logo||LOGO} onBack={()=>setView(null)}>
+    <h2 className="text-xl font-bold mb-1">FACTURA No. {x.no}</h2><p className="text-sm mb-4">Fecha: {x.date} · Estado: {x.st}</p>
+    <p className="text-sm mb-4"><b>Cliente:</b> {x.client||'—'}<br/><b>Dirección:</b> {x.addr||'—'}</p>
+    <table className="w-full text-sm mb-4"><thead><tr className="border-b-2 text-left"><th>Descripción</th><th className="text-right">Monto</th></tr></thead><tbody>{x.lines.filter(l=>l.n).map((l,i)=><tr key={i} className="border-b"><td>{l.n}</td><td className="text-right">{$(l.a)}</td></tr>)}</tbody></table>
+    <p className="text-right text-sm">Subtotal: {$(sub(x))}</p><p className="text-right text-sm">Impuesto ({x.tax}%): {$(tot(x)-sub(x))}</p><p className="text-right text-xl font-bold">TOTAL: {$(tot(x))}</p>
+    <p className="text-xs text-gray-500 mt-8">Gracias por confiar en {CO}. Tel: {PHONE}</p></Doc>}
+  return <div className="space-y-3"><div className="card p-4 space-y-2"><h3 className="gold font-bold">Nueva factura</h3>
+    {quotes.length>0&&<div><label>Cargar desde cotización</label><select defaultValue="" onChange={e=>e.target.value!==''&&fromQ(+e.target.value)}><option value="">Elegir…</option>{quotes.map((x,i)=><option key={i} value={i}>{x.date} · {x.client||'Sin cliente'} · {$(x.price)}</option>)}</select></div>}
+    <div className="grid grid-cols-2 gap-2"><Field l="Cliente" v={f.client} set={v=>up('client',v)}/><Field l="Dirección" v={f.addr} set={v=>up('addr',v)}/></div>
+    {f.lines.map((l,i)=><div key={i} className="grid grid-cols-3 gap-2"><div className="col-span-2"><input placeholder="Descripción" value={l.n} onChange={e=>upl(i,'n',e.target.value)}/></div><input type="number" placeholder="Monto" value={l.a} onChange={e=>upl(i,'a',e.target.value)}/></div>)}
+    <button className="btn" onClick={()=>up('lines',[...f.lines,{n:'',a:0}])}><I n="plus" s={14}/> Línea</button>
+    <Field l="Impuesto %" t="number" v={f.tax} set={v=>up('tax',v)}/><p className="text-right text-xl font-bold text-green-400">Total {$(tot(f))}</p>
+    <button className="btn p w-full" onClick={save}>Guardar factura</button></div>
+    <div className="card p-4"><h3 className="gold font-bold mb-2">Facturas emitidas ({inv.length})</h3>{[...inv].map((x,i)=>({x,i})).reverse().map(({x,i})=><div key={i} className="border-b border-slate-700 py-2 text-sm"><div className="flex justify-between"><span>No. {x.no} · {x.client||'Sin cliente'}</span><b>{$(tot(x))}</b></div><div className="flex gap-2 items-center mt-1"><div style={{width:120}}><select value={x.st} onChange={e=>setSt(i,e.target.value)}><option>Pendiente</option><option>Pagada</option></select></div><button className="btn" onClick={()=>setView(i)}><I n="print" s={14}/> Ver</button><button onClick={()=>setInv(inv.filter((_,j)=>j!==i))}><I n="trash" s={14}/></button></div></div>)}</div></div>;
+}
+
+function App(){
+  const [boss,setBoss]=useState(null);const [tab,setTab]=useState('dash');
+  const [logo,setLogo,sL]=useCloud('logo','');
+  const [quotes,setQuotes,sQ]=useCloud('quotes',[]);const [emps,setEmps,sE]=useCloud('emps',[]);const [inv,setInv,sI]=useCloud('invoices',[]);const [sync,setSync]=useState('ok');useEffect(()=>{SYNC.f=setSync},[]);
+  useEffect(()=>{try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}},[]);const [bk,setBk]=useState(false);
+  if(!boss)return <Login onOk={setBoss}/>;
+  const sts=[sL,sQ,sE,sI];
+  if(sts.includes('error'))return <div className="min-h-screen flex items-center justify-center p-6 text-center"><div className="card p-6 space-y-3"><p>No hay conexión con la base de datos. Por seguridad no se permiten cambios hasta reconectar, para no perder información.</p><button className="btn p" onClick={()=>window.location.reload()}>Reintentar</button></div></div>;
+  if(sts.includes('loading'))return <div className="min-h-screen flex items-center justify-center gold">Cargando sus datos…</div>;
+  const up=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setLogo(r.result);r.readAsDataURL(f)};
+  const T=[['dash','home','Mando'],['quotes','file','Cotizar'],['inv','file','Facturas'],['pay','users','Planilla'],['calc','calc','Calcular'],['rep','chart','Reportes']];
+  return <div className="max-w-3xl mx-auto p-3 pb-24">
+    <header className="flex justify-between items-center mb-3"><div><div className="flex items-center gap-2"><img src={logo||LOGO} style={{height:40}}/><h1 className="gold font-bold text-lg">{CO}</h1></div><p className="text-xs text-slate-400">Tel: {PHONE}</p><p className={'text-xs '+(sync==='ok'?'text-green-400':'text-red-400')}>{sync==='ok'?'● Datos guardados en la nube':'⚠ Sin guardar en la nube, reintentando'}</p></div>
+    <div className="flex gap-2"><label className="btn cursor-pointer" style={{textTransform:'none',letterSpacing:0,fontSize:14,color:'#d4af37'}}><I n="img" s={16}/> Logo<input type="file" accept="image/*" className="hidden" onChange={up}/></label><button className="btn" style={{fontSize:14}} onClick={()=>setBk(true)}>Respaldo</button><button className="btn" onClick={()=>setBoss(null)}><I n="out" s={16}/></button></div></header>
+    {tab==='dash'&&<Dash boss={boss} quotes={quotes} emps={emps} inv={inv}/>}{tab==='quotes'&&<Quotes logo={logo||LOGO} boss={boss} quotes={quotes} setQuotes={setQuotes}/>}{tab==='pay'&&<Payroll logo={logo||LOGO} boss={boss} emps={emps} setEmps={setEmps}/>}{tab==='calc'&&<Calc/>}{tab==='inv'&&<Invoices logo={logo||LOGO} quotes={quotes} inv={inv} setInv={setInv}/>}{tab==='rep'&&<Reports logo={logo||LOGO} quotes={quotes} setQuotes={setQuotes}/>}
+    <nav className="fixed bottom-0 inset-x-0 bg-slate-900 border-t border-slate-700 flex justify-around py-2" style={{paddingBottom:'calc(8px + env(safe-area-inset-bottom,0px))'}}>{T.map(([k,ic,l])=><button key={k} onClick={()=>setTab(k)} className={'flex flex-col items-center text-xs '+(tab===k?'gold':'text-slate-400')}><I n={ic} s={22}/>{l}</button>)}</nav>{bk&&<Backup data={{quotes,emps,inv}} onRestore={d=>{setQuotes(d.quotes);setEmps(d.emps);if(Array.isArray(d.inv))setInv(d.inv)}} onClose={()=>setBk(false)}/>}</div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+</script></body></html>
