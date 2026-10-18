@@ -28,6 +28,7 @@ const {useState,useEffect}=React;
 const SUPABASE_URL="https://zcsjdvpddsgwlyhyzywz.supabase.co",SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjc2pkdnBkZHNnd2x5aHl6eXd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNjMzMzksImV4cCI6MjEwNzgzOTMzOX0.GMI5rnZsFQzc1hw8ib0dKmTua2zXtKeKS7bz9QiEoRM";
 // =======================================================================
 const ACCESS_EMAIL="acceso@contractormegans.app";
+const PW=p=>p+'-mgs26';
 const CONFIG_OK=SUPABASE_URL.startsWith('https://');
 const sb=CONFIG_OK?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 const SYNC={f:null};
@@ -163,7 +164,7 @@ function Reports({logo,quotes,setQuotes}){
 
 function Backup({data,onRestore,onClose}){
   const [t,setT]=useState('');const [m,setM]=useState('');const [np,setNp]=useState('');
-  const chg=async()=>{if(!/^\d{6}$/.test(np)){setM('El PIN debe tener 6 números.');return}const {error}=await sb.auth.updateUser({password:np});setM(error?'No se pudo cambiar el PIN. Intente de nuevo.':'PIN cambiado. Úselo la próxima vez que entre.');if(!error)setNp('')};
+  const chg=async()=>{if(!/^\d{4}$/.test(np)){setM('El PIN debe tener 4 números.');return}const {error}=await sb.auth.updateUser({password:PW(np)});setM(error?'No se pudo cambiar el PIN. Intente de nuevo.':'PIN cambiado. Úselo la próxima vez que entre.');if(!error)setNp('')};
   const json=JSON.stringify(data);
   const ta={background:'#0f172a',color:'#fff',width:'100%',borderRadius:8,padding:8,fontSize:11,border:'1px solid #475569'};
   const copy=()=>{try{navigator.clipboard.writeText(json).then(()=>setM('Copiado. Guárdelo en un lugar seguro (WhatsApp, correo o notas).'),()=>setM('Seleccione el texto y cópielo manualmente.'))}catch(e){setM('Seleccione el texto y cópielo manualmente.')}};
@@ -175,7 +176,7 @@ function Backup({data,onRestore,onClose}){
     <button className="btn p w-full" onClick={copy}>Copiar respaldo</button>
     <textarea value={t} onChange={e=>setT(e.target.value)} placeholder="Pegue aquí un respaldo para restaurar (reemplaza los datos actuales)" rows={3} style={ta}/>
     <button className="btn w-full" onClick={restore}>Restaurar datos</button>
-    <div className="pt-2"><Field l="Nuevo PIN (6 números)" t="password" v={np} set={setNp}/></div><button className="btn w-full" onClick={chg}>Cambiar PIN</button>{m&&<p className="text-sm gold">{m}</p>}<button className="btn w-full" onClick={()=>sb.auth.signOut()}>Cerrar sesión completa</button><button className="btn w-full" onClick={onClose}>Cerrar</button></div></div>;
+    <div className="pt-2"><Field l="Nuevo PIN (4 números)" t="password" v={np} set={setNp}/></div><button className="btn w-full" onClick={chg}>Cambiar PIN</button>{m&&<p className="text-sm gold">{m}</p>}<button className="btn w-full" onClick={()=>sb.auth.signOut()}>Cerrar sesión completa</button><button className="btn w-full" onClick={onClose}>Cerrar</button></div></div>;
 }
 
 function useCloud(key,def){
@@ -191,23 +192,50 @@ function Auth(){
   return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center space-y-3"><img src={LOGO} style={{height:110,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold">{CO}</h1><p className="text-xs text-slate-400 tracking-widest">INICIO DE SESIÓN SEGURO</p><div className="text-left space-y-2"><Field l="Correo" t="email" v={email} set={setE}/><Field l="Contraseña" t="password" v={pw} set={setP}/></div>{err&&<p className="text-red-400 text-sm">{err}</p>}<button className="btn p w-full disabled:opacity-40" disabled={busy||!email||!pw} onClick={go}>{busy?'Verificando…':'Entrar'}</button></div></div>;
 }
 function PinLogin({onOk}){
-  const [name,setName]=useState(ld('mg_name',''));const [pin,setPin]=useState('');const [err,setErr]=useState('');const [busy,setBusy]=useState(false);const [ok,setOk]=useState(false);const [show,setShow]=useState(false);
-  const go=async p=>{
-    if(!name.trim()){setErr('Ingrese su nombre o título');setPin('');return}
+  const [stage,setStage]=useState(ld('mg_has',false)?'login':'create');
+  const mode='pin';const [name,setName]=useState(ld('mg_name',''));
+  const [pin,setPin]=useState('');const [pat,setPat]=useState([]);const [again,setAgain]=useState('');
+  const [err,setErr]=useState('');const [busy,setBusy]=useState(false);const [ok,setOk]=useState(false);const [show,setShow]=useState(false);
+  const secret=mode==='pin'?pin:'P'+pat.join('');
+  const ready=pin.length===4;
+  const clear=()=>{setPin('');setPat([])};
+  const fail=m=>{setErr(m);clear();setBusy(false)};
+  const done=()=>{sv('mg_has',true);sv('mg_mode',mode);sv('mg_name',name.trim());setOk(true);chime();setTimeout(onOk,2200)};
+  const sw=x=>{setStage(x);clear();setErr('');setAgain('')};
+  const go=async()=>{
+    if(!name.trim())return setErr('Ingrese su nombre o título');
+    if(!ready)return setErr('El PIN tiene 4 números');
     setBusy(true);setErr('');
-    const {error}=await sb.auth.signInWithPassword({email:ACCESS_EMAIL,password:p});
-    setBusy(false);
-    if(error){setErr('PIN incorrecto');setPin('');return}
-    sv('mg_name',name.trim());setOk(true);chime();setTimeout(onOk,2200);
+    if(stage==='create'){
+      if(!again){setAgain(secret);clear();setBusy(false);return}
+      if(again!==secret){setAgain('');return fail('No coinciden. Intente de nuevo.')}
+      const {data,error}=await sb.auth.signUp({email:ACCESS_EMAIL,password:PW(secret)});
+      if(error){
+        if(/registered|exists/i.test(error.message)){sw('login');return setErr('Este acceso ya fue creado. Ingrese su PIN o patrón.')}
+        return fail('No se pudo crear el acceso: '+error.message);
+      }
+      if(!data.session)return fail('Falta desactivar la confirmación por correo en Supabase.');
+      setBusy(false);return done();
+    }
+    const {error}=await sb.auth.signInWithPassword({email:ACCESS_EMAIL,password:PW(secret)});
+    if(error)return fail(mode==='pin'?'PIN incorrecto':'Patrón incorrecto');
+    setBusy(false);done();
   };
-  const tap=k=>{if(busy)return;if(k==='C')setPin('');else if(k==='⌫')setPin(pin.slice(0,-1));else if(pin.length<6){const p=pin+k;setPin(p);if(p.length===6)go(p)}};
+  const tap=k=>{if(busy)return;if(k==='C')setPin('');else if(k==='⌫')setPin(pin.slice(0,-1));else if(pin.length<4)setPin(pin+k)};
+  const T=stage==='login'?'Ingrese su acceso':again?'Repita su acceso':'Cree su acceso';
+  const sub=stage==='create'?'Elija un PIN de 4 números. Solo usted lo sabrá.':'';
+  const btn=stage==='login'?'Ingresar':again?'Crear acceso e ingresar':'Continuar';
   if(ok)return <div className="min-h-screen flex items-center justify-center text-center p-6"><div className="pop"><img src={LOGO} style={{height:150,margin:'0 auto 16px'}}/><h1 className="text-3xl gold font-bold">Acceso Concedido</h1><p className="text-xl mt-2">Centro de Mando Activado</p><p className="mt-4 text-slate-400">{greet()}, {name}</p></div></div>;
   return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center">
     <img src={LOGO} style={{height:110,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold mt-2">{CO}</h1><p className="text-xs text-slate-400 mb-4 tracking-widest">EXECUTIVE VIP ACCESS</p>
     <div className="text-left mb-3"><Field l="Nombre / Título (ej: Director Megan, Jefe)" v={name} set={setName}/></div>
-    <div className="flex items-center justify-center gap-3 h-10"><div className="text-3xl tracking-[.4em] gold">{pin.split('').map(c=>show?c:'●').join('')}{'○'.repeat(6-pin.length)}</div><button onClick={()=>setShow(!show)} className="text-slate-400" aria-label="Mostrar PIN"><I n="eye" s={22}/></button></div>
-    <div className="grid grid-cols-3 gap-2 mt-2">{[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(k=><button key={k} className="card py-3 text-xl" onClick={()=>tap(k)}>{k}</button>)}</div>
-    {busy&&<p className="text-sm text-slate-400 mt-2">Verificando…</p>}{err&&<p className="text-red-400 text-sm mt-2">{err}</p>}
+    <p className="gold font-bold">{T}</p>{sub&&<p className="text-xs text-slate-400 mb-2">{sub}</p>}
+    <p className="text-xs text-slate-400 mb-1">PIN de 4 números</p>
+    {mode==='pin'?<div><div className="flex items-center justify-center gap-3 h-10"><div className="text-3xl tracking-[.4em] gold">{pin.split('').map(c=>show?c:'●').join('')}{'○'.repeat(4-pin.length)}</div><button onClick={()=>setShow(!show)} className="text-slate-400" aria-label="Mostrar PIN"><I n="eye" s={22}/></button></div>
+      <div className="grid grid-cols-3 gap-2 mt-2">{[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(k=><button key={k} className="card py-3 text-xl" onClick={()=>tap(k)}>{k}</button>)}</div></div>
+    :<div><p className="text-xs text-slate-400 mb-2">Toque al menos 6 puntos en secuencia</p><div className="grid grid-cols-3 gap-4 w-48 mx-auto">{[...Array(9)].map((_,i)=>{const ix=pat.indexOf(i);return <button key={i} onClick={()=>!pat.includes(i)&&setPat([...pat,i])} className={'w-12 h-12 rounded-full border-2 mx-auto text-sm '+(ix>=0?'bg-gold border-yellow-500':'border-slate-500')}>{ix>=0?ix+1:''}</button>})}</div><button className="text-xs text-slate-400 mt-2" onClick={()=>setPat([])}>Reiniciar patrón</button></div>}
+    {err&&<p className="text-red-400 text-sm mt-2">{err}</p>}
+    <button disabled={busy||!ready} onClick={go} className="btn p w-full mt-4 disabled:opacity-40">{busy?'Verificando…':btn}</button><p className="text-xs text-slate-600 mt-3">v4</p>
   </div></div>;
 }
 function Root(){
