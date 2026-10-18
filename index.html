@@ -5,7 +5,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{background:#0f172a;font-family:Georgia,'Times New Roman',serif;color:#e2e8f0}
@@ -24,15 +23,7 @@ label{font-size:11px;color:#94a3b8;font-family:system-ui;text-transform:uppercas
 </style></head><body><div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect}=React;
-// ===== CONFIGURACIÓN: pegue aquí los datos de su proyecto Supabase =====
-const SUPABASE_URL="https://zcsjdvpddsgwlyhyzywz.supabase.co",SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpjc2pkdnBkZHNnd2x5aHl6eXd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNjMzMzksImV4cCI6MjEwNzgzOTMzOX0.GMI5rnZsFQzc1hw8ib0dKmTua2zXtKeKS7bz9QiEoRM";
-// =======================================================================
-const ACCESS_EMAIL="acceso@contractormegans.app";
-const PW=p=>p+'-mgs26';
-const CONFIG_OK=SUPABASE_URL.startsWith('https://');
-const sb=CONFIG_OK?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
-const SYNC={f:null};
-const P={shield:"M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z",home:"M3 11l9-8 9 8v10h-6v-6H9v6H3z",file:"M6 2h9l5 5v15H6zM14 2v6h6",users:"M16 11a4 4 0 100-8 4 4 0 000 8zM2 21c0-4 3-7 7-7s7 3 7 7",calc:"M5 2h14v20H5zM8 6h8M8 11h2M14 11h2M8 16h2M14 16h2",print:"M6 9V2h12v7M6 18H4v-8h16v8h-2M6 14h12v8H6z",img:"M3 3h18v18H3zM8 10a2 2 0 100-4 2 2 0 000 4zM21 15l-5-5L5 21",plus:"M12 5v14M5 12h14",trash:"M4 7h16M9 7V3h6v4M6 7l1 14h10l1-14",out:"M9 21H4V3h5M16 17l5-5-5-5M21 12H9",snow:"M12 2v20M3 7l18 10M21 7L3 17",back:"M15 18l-6-6 6-6",chart:"M4 20V10M10 20V4M16 20v-8M22 20H2",eye:"M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z"};
+const P={shield:"M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z",home:"M3 11l9-8 9 8v10h-6v-6H9v6H3z",file:"M6 2h9l5 5v15H6zM14 2v6h6",users:"M16 11a4 4 0 100-8 4 4 0 000 8zM2 21c0-4 3-7 7-7s7 3 7 7",calc:"M5 2h14v20H5zM8 6h8M8 11h2M14 11h2M8 16h2M14 16h2",print:"M6 9V2h12v7M6 18H4v-8h16v8h-2M6 14h12v8H6z",img:"M3 3h18v18H3zM8 10a2 2 0 100-4 2 2 0 000 4zM21 15l-5-5L5 21",plus:"M12 5v14M5 12h14",trash:"M4 7h16M9 7V3h6v4M6 7l1 14h10l1-14",out:"M9 21H4V3h5M16 17l5-5-5-5M21 12H9",snow:"M12 2v20M3 7l18 10M21 7L3 17",back:"M15 18l-6-6 6-6",chart:"M4 20V10M10 20V4M16 20v-8M22 20H2"};
 const I=({n,s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{display:'inline'}}><path d={P[n]}/></svg>;
 const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -163,11 +154,10 @@ function Reports({logo,quotes,setQuotes}){
 }
 
 function Backup({data,onRestore,onClose}){
-  const [t,setT]=useState('');const [m,setM]=useState('');const [np,setNp]=useState('');
-  const chg=async()=>{if(!/^\d{4}$/.test(np)){setM('El PIN debe tener 4 números.');return}const {error}=await sb.auth.updateUser({password:PW(np)});setM(error?'No se pudo cambiar el PIN. Intente de nuevo.':'PIN cambiado. Úselo la próxima vez que entre.');if(!error)setNp('')};
+  const [t,setT]=useState('');const [m,setM]=useState('');
   const json=JSON.stringify(data);
   const ta={background:'#0f172a',color:'#fff',width:'100%',borderRadius:8,padding:8,fontSize:11,border:'1px solid #475569'};
-  const copy=()=>{try{navigator.clipboard.writeText(json).then(()=>setM('Copiado. Guárdelo en un lugar seguro (WhatsApp, correo o notas).'),()=>setM('Seleccione el texto y cópielo manualmente.'))}catch(e){setM('Seleccione el texto y cópielo manualmente.')}};
+  const copy=()=>{sv('mg_lastbk',Date.now());try{navigator.clipboard.writeText(json).then(()=>setM('Copiado. Guárdelo en un lugar seguro (WhatsApp, correo o notas).'),()=>setM('Seleccione el texto y cópielo manualmente.'))}catch(e){setM('Seleccione el texto y cópielo manualmente.')}};
   const restore=()=>{try{const d=JSON.parse(t);if(!Array.isArray(d.quotes)||!Array.isArray(d.emps))throw 0;onRestore(d);setM('Datos restaurados.')}catch(e){setM('El texto no es un respaldo válido.')}};
   return <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-3"><div className="card p-4 w-full max-w-lg max-h-[90vh] overflow-auto space-y-2">
     <h3 className="gold font-bold">Respaldo de datos</h3>
@@ -176,74 +166,7 @@ function Backup({data,onRestore,onClose}){
     <button className="btn p w-full" onClick={copy}>Copiar respaldo</button>
     <textarea value={t} onChange={e=>setT(e.target.value)} placeholder="Pegue aquí un respaldo para restaurar (reemplaza los datos actuales)" rows={3} style={ta}/>
     <button className="btn w-full" onClick={restore}>Restaurar datos</button>
-    <div className="pt-2"><Field l="Nuevo PIN (4 números)" t="password" v={np} set={setNp}/></div><button className="btn w-full" onClick={chg}>Cambiar PIN</button>{m&&<p className="text-sm gold">{m}</p>}<button className="btn w-full" onClick={()=>sb.auth.signOut()}>Cerrar sesión completa</button><button className="btn w-full" onClick={onClose}>Cerrar</button></div></div>;
-}
-
-function useCloud(key,def){
-  const [v,setV]=useState(()=>ld('mg_'+key,def));const [st,setSt]=useState('loading');const [n,setN]=useState(0);
-  useEffect(()=>{sb.from('app_data').select('value').eq('key',key).maybeSingle().then(({data,error})=>{if(error)setSt('error');else{if(data&&!ld('mg_dirty_'+key,false))setV(data.value);setSt('ready')}},()=>setSt('error'))},[]);
-  useEffect(()=>{const f=()=>setN(x=>x+1);window.addEventListener('online',f);return()=>window.removeEventListener('online',f)},[]);
-  useEffect(()=>{if(st!=='ready')return;sv('mg_'+key,v);const t=setTimeout(()=>{sb.from('app_data').upsert({key,value:v,updated_at:new Date().toISOString()}).then(({error})=>{sv('mg_dirty_'+key,!!error);SYNC.f&&SYNC.f(error?'err':'ok')},()=>{sv('mg_dirty_'+key,true);SYNC.f&&SYNC.f('err')})},700);return()=>clearTimeout(t)},[v,st,n]);
-  return [v,setV,st];
-}
-function Auth(){
-  const [email,setE]=useState('');const [pw,setP]=useState('');const [err,setErr]=useState('');const [busy,setB]=useState(false);
-  const go=async()=>{setB(true);setErr('');const {error}=await sb.auth.signInWithPassword({email:email.trim(),password:pw});if(error)setErr('Correo o contraseña incorrectos');setB(false)};
-  return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center space-y-3"><img src={LOGO} style={{height:110,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold">{CO}</h1><p className="text-xs text-slate-400 tracking-widest">INICIO DE SESIÓN SEGURO</p><div className="text-left space-y-2"><Field l="Correo" t="email" v={email} set={setE}/><Field l="Contraseña" t="password" v={pw} set={setP}/></div>{err&&<p className="text-red-400 text-sm">{err}</p>}<button className="btn p w-full disabled:opacity-40" disabled={busy||!email||!pw} onClick={go}>{busy?'Verificando…':'Entrar'}</button></div></div>;
-}
-function PinLogin({onOk}){
-  const [stage,setStage]=useState(ld('mg_has',false)?'login':'create');
-  const mode='pin';const [name,setName]=useState(ld('mg_name',''));
-  const [pin,setPin]=useState('');const [pat,setPat]=useState([]);const [again,setAgain]=useState('');
-  const [err,setErr]=useState('');const [busy,setBusy]=useState(false);const [ok,setOk]=useState(false);const [show,setShow]=useState(false);
-  const secret=mode==='pin'?pin:'P'+pat.join('');
-  const ready=pin.length===4;
-  const clear=()=>{setPin('');setPat([])};
-  const fail=m=>{setErr(m);clear();setBusy(false)};
-  const done=()=>{sv('mg_has',true);sv('mg_mode',mode);sv('mg_name',name.trim());setOk(true);chime();setTimeout(onOk,2200)};
-  const sw=x=>{setStage(x);clear();setErr('');setAgain('')};
-  const go=async()=>{
-    if(!name.trim())return setErr('Ingrese su nombre o título');
-    if(!ready)return setErr('El PIN tiene 4 números');
-    setBusy(true);setErr('');
-    if(stage==='create'){
-      if(!again){setAgain(secret);clear();setBusy(false);return}
-      if(again!==secret){setAgain('');return fail('No coinciden. Intente de nuevo.')}
-      const {data,error}=await sb.auth.signUp({email:ACCESS_EMAIL,password:PW(secret)});
-      if(error){
-        if(/registered|exists/i.test(error.message)){sw('login');return setErr('Este acceso ya fue creado. Ingrese su PIN o patrón.')}
-        return fail('No se pudo crear el acceso: '+error.message);
-      }
-      if(!data.session)return fail('Falta desactivar la confirmación por correo en Supabase.');
-      setBusy(false);return done();
-    }
-    const {error}=await sb.auth.signInWithPassword({email:ACCESS_EMAIL,password:PW(secret)});
-    if(error)return fail(mode==='pin'?'PIN incorrecto':'Patrón incorrecto');
-    setBusy(false);done();
-  };
-  const tap=k=>{if(busy)return;if(k==='C')setPin('');else if(k==='⌫')setPin(pin.slice(0,-1));else if(pin.length<4)setPin(pin+k)};
-  const T=stage==='login'?'Ingrese su acceso':again?'Repita su acceso':'Cree su acceso';
-  const sub=stage==='create'?'Elija un PIN de 4 números. Solo usted lo sabrá.':'';
-  const btn=stage==='login'?'Ingresar':again?'Crear acceso e ingresar':'Continuar';
-  if(ok)return <div className="min-h-screen flex items-center justify-center text-center p-6"><div className="pop"><img src={LOGO} style={{height:150,margin:'0 auto 16px'}}/><h1 className="text-3xl gold font-bold">Acceso Concedido</h1><p className="text-xl mt-2">Centro de Mando Activado</p><p className="mt-4 text-slate-400">{greet()}, {name}</p></div></div>;
-  return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center">
-    <img src={LOGO} style={{height:110,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold mt-2">{CO}</h1><p className="text-xs text-slate-400 mb-4 tracking-widest">EXECUTIVE VIP ACCESS</p>
-    <div className="text-left mb-3"><Field l="Nombre / Título (ej: Director Megan, Jefe)" v={name} set={setName}/></div>
-    <p className="gold font-bold">{T}</p>{sub&&<p className="text-xs text-slate-400 mb-2">{sub}</p>}
-    <p className="text-xs text-slate-400 mb-1">PIN de 4 números</p>
-    {mode==='pin'?<div><div className="flex items-center justify-center gap-3 h-10"><div className="text-3xl tracking-[.4em] gold">{pin.split('').map(c=>show?c:'●').join('')}{'○'.repeat(4-pin.length)}</div><button onClick={()=>setShow(!show)} className="text-slate-400" aria-label="Mostrar PIN"><I n="eye" s={22}/></button></div>
-      <div className="grid grid-cols-3 gap-2 mt-2">{[1,2,3,4,5,6,7,8,9,'C',0,'⌫'].map(k=><button key={k} className="card py-3 text-xl" onClick={()=>tap(k)}>{k}</button>)}</div></div>
-    :<div><p className="text-xs text-slate-400 mb-2">Toque al menos 6 puntos en secuencia</p><div className="grid grid-cols-3 gap-4 w-48 mx-auto">{[...Array(9)].map((_,i)=>{const ix=pat.indexOf(i);return <button key={i} onClick={()=>!pat.includes(i)&&setPat([...pat,i])} className={'w-12 h-12 rounded-full border-2 mx-auto text-sm '+(ix>=0?'bg-gold border-yellow-500':'border-slate-500')}>{ix>=0?ix+1:''}</button>})}</div><button className="text-xs text-slate-400 mt-2" onClick={()=>setPat([])}>Reiniciar patrón</button></div>}
-    {err&&<p className="text-red-400 text-sm mt-2">{err}</p>}
-    <button disabled={busy||!ready} onClick={go} className="btn p w-full mt-4 disabled:opacity-40">{busy?'Verificando…':btn}</button><p className="text-xs text-slate-600 mt-3">v4</p>
-  </div></div>;
-}
-function Root(){
-  const [s,setS]=useState(undefined);const [entered,setEntered]=useState(false);
-  useEffect(()=>{if(!CONFIG_OK)return;sb.auth.getSession().then(({data})=>setS(data.session));const {data}=sb.auth.onAuthStateChange((_e,x)=>setS(x));return()=>data.subscription.unsubscribe()},[]);
-  if(!CONFIG_OK)return <div className="min-h-screen flex items-center justify-center p-6 text-center">Falta configurar Supabase: pegue el Project URL y la anon key al inicio del archivo.</div>;
-  if(s===undefined)return <div className="min-h-screen flex items-center justify-center gold">Cargando…</div>;
-  return entered&&s?<App/>:<PinLogin onOk={()=>setEntered(true)}/>;
+    {m&&<p className="text-sm gold">{m}</p>}<button className="btn w-full" onClick={onClose}>Cerrar</button></div></div>;
 }
 
 function Invoices({logo,quotes,inv,setInv}){
@@ -270,22 +193,28 @@ function Invoices({logo,quotes,inv,setInv}){
     <div className="card p-4"><h3 className="gold font-bold mb-2">Facturas emitidas ({inv.length})</h3>{[...inv].map((x,i)=>({x,i})).reverse().map(({x,i})=><div key={i} className="border-b border-slate-700 py-2 text-sm"><div className="flex justify-between"><span>No. {x.no} · {x.client||'Sin cliente'}</span><b>{$(tot(x))}</b></div><div className="flex gap-2 items-center mt-1"><div style={{width:120}}><select value={x.st} onChange={e=>setSt(i,e.target.value)}><option>Pendiente</option><option>Pagada</option></select></div><button className="btn" onClick={()=>setView(i)}><I n="print" s={14}/> Ver</button><button onClick={()=>setInv(inv.filter((_,j)=>j!==i))}><I n="trash" s={14}/></button></div></div>)}</div></div>;
 }
 
+function Welcome({onOk}){
+  const [n,setN]=useState('');
+  return <div className="min-h-screen flex items-center justify-center p-4"><div className="card p-6 w-full max-w-sm text-center space-y-3"><img src={LOGO} style={{height:130,margin:'0 auto'}}/><h1 className="text-2xl font-bold gold">{CO}</h1><p className="text-xs text-slate-400 tracking-widest">CENTRO DE MANDO · v5</p><div className="text-left"><Field l="Nombre / Título (ej: Director Megan, Jefe)" v={n} set={setN}/></div><button className="btn p w-full disabled:opacity-40" disabled={!n.trim()} onClick={()=>{chime();onOk(n.trim())}}>Entrar</button></div></div>;
+}
+function Splash({name}){
+  return <div className="min-h-screen flex items-center justify-center text-center p-6"><div className="pop"><img src={LOGO} style={{height:150,margin:'0 auto 16px'}}/><h1 className="text-3xl gold font-bold">{greet()}, {name}</h1><p className="text-xl mt-2">Centro de Mando Activado</p></div></div>;
+}
+
 function App(){
-  const [boss,setBoss]=useState(ld('mg_name','Jefe'));const [tab,setTab]=useState('dash');
-  const [logo,setLogo,sL]=useCloud('logo','');
-  const [quotes,setQuotes,sQ]=useCloud('quotes',[]);const [emps,setEmps,sE]=useCloud('emps',[]);const [inv,setInv,sI]=useCloud('invoices',[]);const [sync,setSync]=useState('ok');useEffect(()=>{SYNC.f=setSync},[]);
-  useEffect(()=>{try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}},[]);const [bk,setBk]=useState(false);
-  
-  const sts=[sL,sQ,sE,sI];
-  if(sts.includes('error'))return <div className="min-h-screen flex items-center justify-center p-6 text-center"><div className="card p-6 space-y-3"><p>No hay conexión con la base de datos. Por seguridad no se permiten cambios hasta reconectar, para no perder información.</p><button className="btn p" onClick={()=>window.location.reload()}>Reintentar</button></div></div>;
-  if(sts.includes('loading'))return <div className="min-h-screen flex items-center justify-center gold">Cargando sus datos…</div>;
+  const [boss,setBoss]=useState(ld('mg_name',''));const [splash,setSplash]=useState(true);useEffect(()=>{if(!ld('mg_lastbk',0))sv('mg_lastbk',Date.now());const t=setTimeout(()=>setSplash(false),2200);return()=>clearTimeout(t)},[]);const [tab,setTab]=useState('dash');
+  const [logo,setLogo]=useState(ld('mg_logo',''));
+  const [quotes,setQuotes]=useState(ld('mg_q',[]));const [emps,setEmps]=useState(ld('mg_e',[]));const [inv,setInv]=useState(ld('mg_i',[]));useEffect(()=>sv('mg_i',inv),[inv]);
+  useEffect(()=>sv('mg_q',quotes),[quotes]);useEffect(()=>sv('mg_e',emps),[emps]);useEffect(()=>sv('mg_logo',logo),[logo]);useEffect(()=>{try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}},[]);const [bk,setBk]=useState(false);
+  if(!boss)return <Welcome onOk={n=>{sv('mg_name',n);setBoss(n)}}/>;
+  if(splash)return <Splash name={boss}/>;
   const up=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setLogo(r.result);r.readAsDataURL(f)};
   const T=[['dash','home','Mando'],['quotes','file','Cotizar'],['inv','file','Facturas'],['pay','users','Planilla'],['calc','calc','Calcular'],['rep','chart','Reportes']];
   return <div className="max-w-3xl mx-auto p-3 pb-24">
-    <header className="flex justify-between items-center mb-3"><div><div className="flex items-center gap-2"><img src={logo||LOGO} style={{height:40}}/><h1 className="gold font-bold text-lg">{CO}</h1></div><p className="text-xs text-slate-400">Tel: {PHONE}</p><p className={'text-xs '+(sync==='ok'?'text-green-400':'text-red-400')}>{sync==='ok'?'● Datos guardados en la nube':'⚠ Sin guardar en la nube, reintentando'}</p></div>
-    <div className="flex gap-2"><label className="btn cursor-pointer" style={{textTransform:'none',letterSpacing:0,fontSize:14,color:'#d4af37'}}><I n="img" s={16}/> Logo<input type="file" accept="image/*" className="hidden" onChange={up}/></label><button className="btn" style={{fontSize:14}} onClick={()=>setBk(true)}>Respaldo / PIN</button><button className="btn" onClick={()=>window.location.reload()}><I n="out" s={16}/></button></div></header>
-    {tab==='dash'&&<Dash boss={boss} quotes={quotes} emps={emps} inv={inv}/>}{tab==='quotes'&&<Quotes logo={logo||LOGO} boss={boss} quotes={quotes} setQuotes={setQuotes}/>}{tab==='pay'&&<Payroll logo={logo||LOGO} boss={boss} emps={emps} setEmps={setEmps}/>}{tab==='calc'&&<Calc/>}{tab==='inv'&&<Invoices logo={logo||LOGO} quotes={quotes} inv={inv} setInv={setInv}/>}{tab==='rep'&&<Reports logo={logo||LOGO} quotes={quotes} setQuotes={setQuotes}/>}
+    <header className="flex justify-between items-center mb-3"><div><div className="flex items-center gap-2"><img src={logo||LOGO} style={{height:40}}/><h1 className="gold font-bold text-lg">{CO}</h1></div><p className="text-xs text-slate-400">Tel: {PHONE}</p></div>
+    <div className="flex gap-2"><label className="btn cursor-pointer" style={{textTransform:'none',letterSpacing:0,fontSize:14,color:'#d4af37'}}><I n="img" s={16}/> Logo<input type="file" accept="image/*" className="hidden" onChange={up}/></label><button className="btn" style={{fontSize:14}} onClick={()=>setBk(true)}>Respaldo</button><button className="btn" style={{fontSize:14}} onClick={()=>{sv('mg_name','');setBoss('')}}>Nombre</button></div></header>
+    {(quotes.length+emps.length+inv.length>0&&Date.now()-ld('mg_lastbk',Date.now())>12096e5)&&<div className="card p-3 mb-3 text-sm gold">Hace tiempo que no hace un respaldo de su información. Toque <b>Respaldo</b> arriba y copie el código en un lugar seguro.</div>}{tab==='dash'&&<Dash boss={boss} quotes={quotes} emps={emps} inv={inv}/>}{tab==='quotes'&&<Quotes logo={logo||LOGO} boss={boss} quotes={quotes} setQuotes={setQuotes}/>}{tab==='pay'&&<Payroll logo={logo||LOGO} boss={boss} emps={emps} setEmps={setEmps}/>}{tab==='calc'&&<Calc/>}{tab==='inv'&&<Invoices logo={logo||LOGO} quotes={quotes} inv={inv} setInv={setInv}/>}{tab==='rep'&&<Reports logo={logo||LOGO} quotes={quotes} setQuotes={setQuotes}/>}
     <nav className="fixed bottom-0 inset-x-0 bg-slate-900 border-t border-slate-700 flex justify-around py-2" style={{paddingBottom:'calc(8px + env(safe-area-inset-bottom,0px))'}}>{T.map(([k,ic,l])=><button key={k} onClick={()=>setTab(k)} className={'flex flex-col items-center text-xs '+(tab===k?'gold':'text-slate-400')}><I n={ic} s={22}/>{l}</button>)}</nav>{bk&&<Backup data={{quotes,emps,inv}} onRestore={d=>{setQuotes(d.quotes);setEmps(d.emps);if(Array.isArray(d.inv))setInv(d.inv)}} onClose={()=>setBk(false)}/>}</div>;
 }
-ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script></body></html>
